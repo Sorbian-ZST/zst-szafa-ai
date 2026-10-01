@@ -286,6 +286,14 @@ async function register(operation) {
             operation + " klucz – sala " + selectedRoom,
             true
         );
+        // Wyczyść formularz po prawidłowym zapisie
+        document.getElementById("teacher").value = "";
+
+    selectedRoom = "";
+
+document.querySelectorAll(".room").forEach(button => {
+    button.classList.remove("active");
+});
 
     } catch (error) {
 
