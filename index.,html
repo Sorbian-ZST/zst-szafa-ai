@@ -1,1 +1,249 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Szafa AI – Rejestr klucza</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f3f5f7;
+    color: #222;
+}
+
+.container {
+    max-width: 500px;
+    margin: auto;
+    padding: 25px 18px;
+}
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.logo {
+    text-align: center;
+    font-size: 52px;
+}
+
+h1 {
+    text-align: center;
+    margin: 10px 0 5px;
+    font-size: 25px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+select {
+    width: 100%;
+    padding: 15px;
+    font-size: 17px;
+    border-radius: 10px;
+    border: 1px solid #bbb;
+    background: white;
+}
+
+.rooms {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.room {
+    padding: 14px 5px;
+    border: 2px solid #bbb;
+    background: white;
+    border-radius: 10px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.room.active {
+    border-color: #0067b8;
+    background: #e7f3ff;
+    font-weight: bold;
+}
+
+.actions {
+    margin-top: 30px;
+    display: grid;
+    gap: 12px;
+}
+
+button.action {
+    border: none;
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 19px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.take {
+    background: #107c10;
+    color: white;
+}
+
+.return {
+    background: #0067b8;
+    color: white;
+}
+
+#message {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+}
+
+.error {
+    background: #fde7e9;
+    color: #a80000;
+}
+
+.success {
+    background: #dff6dd;
+    color: #107c10;
+}
+
+.footer {
+    text-align: center;
+    color: #777;
+    font-size: 13px;
+    margin-top: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<div class="logo">🔑</div>
+
+<h1>SZAFA AI</h1>
+<div class="subtitle">Rejestr pobrania klucza</div>
+
+<label for="teacher">Nauczyciel</label>
+
+<select id="teacher">
+    <option value="">— wybierz nauczyciela —</option>
+    <option>Radosław Sorbian</option>
+    <option>Nauczyciel 2</option>
+    <option>Nauczyciel 3</option>
+</select>
+
+
+<label>Sala, do której pobierasz klucz</label>
+
+<div class="rooms">
+    <button class="room" onclick="selectRoom(this,'01')">01</button>
+    <button class="room" onclick="selectRoom(this,'15')">15</button>
+    <button class="room" onclick="selectRoom(this,'19')">19</button>
+    <button class="room" onclick="selectRoom(this,'25')">25</button>
+</div>
+
+
+<div class="actions">
+
+<button class="action take" onclick="register('Pobieram')">
+🔑 POBIERAM KLUCZ
+</button>
+
+<button class="action return" onclick="register('Oddaję')">
+↩ ODDAJĘ KLUCZ
+</button>
+
+</div>
+
+<div id="message"></div>
+
+</div>
+
+<div class="footer">
+ZST – Pracownia AI
+</div>
+
+</div>
+
+
+<script>
+
+let selectedRoom = "";
+
+function selectRoom(button, room) {
+
+    selectedRoom = room;
+
+    document.querySelectorAll(".room").forEach(b => {
+        b.classList.remove("active");
+    });
+
+    button.classList.add("active");
+}
+
+
+function register(operation) {
+
+    const teacher = document.getElementById("teacher").value;
+    const message = document.getElementById("message");
+
+    if (!teacher) {
+        showMessage("Wybierz nauczyciela.", false);
+        return;
+    }
+
+    if (!selectedRoom) {
+        showMessage("Wybierz salę.", false);
+        return;
+    }
+
+    /*
+       W następnym kroku
+       podłączymy tutaj Power Automate.
+    */
+
+    showMessage(
+        "✓ " + operation + " – " +
+        teacher + ", sala " + selectedRoom,
+        true
+    );
+}
+
+
+function showMessage(text, success) {
+
+    const message = document.getElementById("message");
+
+    message.style.display = "block";
+    message.className = success ? "success" : "error";
+    message.innerHTML = text;
+}
+
+</script>
+
+</body>
+</html>
