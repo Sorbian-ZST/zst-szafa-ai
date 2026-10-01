@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
 <title>Rejestr pobrania kluczy</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -73,6 +75,11 @@ input:focus {
     border-color: #0067b8;
 }
 
+#teacher::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
 .rooms-title {
     font-weight: bold;
     margin-top: 25px;
@@ -125,6 +132,12 @@ button.action {
     color: white;
 }
 
+/* Wygląd przycisków podczas zapisywania */
+button.action:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 #message {
     margin-top: 20px;
     padding: 15px;
@@ -132,7 +145,6 @@ button.action {
     text-align: center;
     display: none;
     white-space: pre-line;
-    text-align: center;
     line-height: 1.5;
 }
 
@@ -145,10 +157,6 @@ button.action {
     background: #dff6dd;
     color: #107c10;
 }
-#teacher::placeholder {
-    color: #999;
-    opacity: 1;
-}
 
 .footer {
     text-align: center;
@@ -157,8 +165,9 @@ button.action {
     margin-top: 22px;
 }
 
-/* Na bardzo małych telefonach nagłówek dopasuje się do ekranu */
+/* Dostosowanie do małych ekranów */
 @media (max-width: 430px) {
+
     h1 {
         font-size: 19px;
     }
@@ -167,72 +176,119 @@ button.action {
         padding: 20px 16px;
     }
 }
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<div class="card">
+    <div class="card">
 
-<div class="logo">🔑</div>
+        <div class="logo">🔑</div>
 
-<h1>REJESTR POBRANIA KLUCZY</h1>
-<div class="subtitle">do szaf z laptopami</div>
+        <h1>REJESTR POBRANIA KLUCZY</h1>
 
-<label for="teacher">Nauczyciel</label>
+        <div class="subtitle">
+            do szaf z laptopami
+        </div>
 
-<input
-    type="text"
-    id="teacher"
-    placeholder="Imię i nazwisko"
-    autocomplete="off"
->
 
-<div class="rooms-title">SALE wyposażone w laptopy</div>
+        <label for="teacher">
+            Nauczyciel
+        </label>
 
-<div class="rooms">
-    <button class="room" onclick="selectRoom(this,'01')">01</button>
-    <button class="room" onclick="selectRoom(this,'15')">15</button>
-    <button class="room" onclick="selectRoom(this,'19')">19</button>
-    <button class="room" onclick="selectRoom(this,'25')">25</button>
+        <input
+            type="text"
+            id="teacher"
+            placeholder="Imię i nazwisko"
+            autocomplete="off"
+            value=""
+        >
+
+
+        <div class="rooms-title">
+            SALE wyposażone w laptopy
+        </div>
+
+        <div class="rooms">
+
+            <button
+                type="button"
+                class="room"
+                onclick="selectRoom(this,'01')">
+                01
+            </button>
+
+            <button
+                type="button"
+                class="room"
+                onclick="selectRoom(this,'15')">
+                15
+            </button>
+
+            <button
+                type="button"
+                class="room"
+                onclick="selectRoom(this,'19')">
+                19
+            </button>
+
+            <button
+                type="button"
+                class="room"
+                onclick="selectRoom(this,'25')">
+                25
+            </button>
+
+        </div>
+
+
+        <div class="actions">
+
+            <button
+                type="button"
+                class="action take"
+                onclick="register('Pobieram')">
+                🔑 POBIERAM KLUCZ
+            </button>
+
+            <button
+                type="button"
+                class="action return"
+                onclick="register('Oddaję')">
+                ↩ ODDAJĘ KLUCZ
+            </button>
+
+        </div>
+
+
+        <div id="message"></div>
+
+    </div>
+
+
+    <div class="footer">
+        Zespół Szkół Technicznych w Słupsku ® 2026
+    </div>
+
 </div>
 
-<div class="actions">
-
-<button class="action take" onclick="register('Pobieram')">
-🔑 POBIERAM KLUCZ
-</button>
-
-<button class="action return" onclick="register('Oddaję')">
-↩ ODDAJĘ KLUCZ
-</button>
-
-</div>
-
-<div id="message"></div>
-
-</div>
-
-<div class="footer">
-Zespół Szkół Technicznych w Słupsku ® 2026
-</div>
-
-</div>
 
 <script>
 
+/* ============================= */
+/* WYBRANA SALA                  */
+/* ============================= */
+
 let selectedRoom = "";
 
-/* Odczyt zapamiętanego nazwiska */
-window.addEventListener("DOMContentLoaded", function() {
-    const savedTeacher = localStorage.getItem("szafaAI_nauczyciel");
 
-    if (savedTeacher) {
-        document.getElementById("teacher").value = savedTeacher;
-    }
-});
+/* ============================= */
+/* WYBÓR SALI                    */
+/* ============================= */
 
 function selectRoom(button, room) {
 
@@ -245,25 +301,66 @@ function selectRoom(button, room) {
     button.classList.add("active");
 }
 
+
+/* ============================= */
+/* REJESTRACJA                   */
+/* ============================= */
+
 async function register(operation) {
 
     const teacher =
         document.getElementById("teacher").value.trim();
 
+    const actionButtons =
+        document.querySelectorAll("button.action");
+
+
+    /* Sprawdzenie nazwiska */
+
     if (!teacher) {
-        showMessage("Wpisz imię i nazwisko.", false);
+
+        showMessage(
+            "Wpisz imię i nazwisko.",
+            false
+        );
+
         return;
     }
+
+
+    /* Sprawdzenie sali */
 
     if (!selectedRoom) {
-        showMessage("Wybierz salę.", false);
+
+        showMessage(
+            "Wybierz salę.",
+            false
+        );
+
         return;
     }
 
-    // Zapamiętanie nazwiska na tym urządzeniu
-    // localStorage.setItem("szafaAI_nauczyciel", teacher);
 
-    showMessage("Zapisywanie...", true);
+    /*
+       Zapamiętujemy numer sali,
+       zanim formularz zostanie wyczyszczony.
+    */
+
+    const room = selectedRoom;
+
+
+    /* Blokujemy przyciski podczas zapisu */
+
+    actionButtons.forEach(button => {
+        button.disabled = true;
+    });
+
+
+    showMessage(
+        "Zapisywanie...",
+        true
+    );
+
 
     try {
 
@@ -271,60 +368,134 @@ async function register(operation) {
             "https://zst-szafa-ai-api.radoslaw-sorbian.workers.dev",
             {
                 method: "POST",
+
                 headers: {
                     "Content-Type": "application/json"
                 },
+
                 body: JSON.stringify({
+
                     nauczyciel: teacher,
                     operacja: operation,
-                    sala: selectedRoom
+                    sala: room
+
                 })
             }
         );
 
-        const result = await response.json();
+
+        const result =
+            await response.json();
+
 
         if (!response.ok || !result.ok) {
-            throw new Error(result.error || "Błąd zapisu");
+
+            throw new Error(
+                result.error || "Błąd zapisu"
+            );
         }
 
+
+        /* ============================= */
+        /* SUKCES                        */
+        /* ============================= */
+
         showMessage(
-    "✓ ZAREJESTROWANO\n" +
-    (operation === "Pobieram" ? "Pobrano klucz" : "Oddano klucz") +
-    " – sala " + selectedRoom,
-    true
+
+            "✓ ZAREJESTROWANO\n" +
+
+            (
+                operation === "Pobieram"
+                ? "Pobrano klucz"
+                : "Oddano klucz"
+            )
+
+            + " – sala " + room,
+
+            true
         );
-        // Wyczyść formularz po prawidłowym zapisie
+
+
+        /* ============================= */
+        /* CZYSZCZENIE FORMULARZA        */
+        /* ============================= */
+
         document.getElementById("teacher").value = "";
 
-    selectedRoom = "";
+        selectedRoom = "";
 
-document.querySelectorAll(".room").forEach(button => {
-    button.classList.remove("active");
-});
+        document.querySelectorAll(".room").forEach(button => {
+            button.classList.remove("active");
+        });
+
 
     } catch (error) {
+
+
+        /* ============================= */
+        /* BŁĄD                          */
+        /* ============================= */
 
         showMessage(
             "Nie udało się zapisać. Spróbuj ponownie.",
             false
         );
+
+
+    } finally {
+
+
+        /* Ponownie włączamy przyciski */
+
+        actionButtons.forEach(button => {
+            button.disabled = false;
+        });
+
     }
 }
 
+
+/* ============================= */
+/* KOMUNIKAT                     */
+/* ============================= */
+
 function showMessage(text, success) {
 
-    const message = document.getElementById("message");
+    const message =
+        document.getElementById("message");
 
     message.style.display = "block";
-    message.className = success ? "success" : "error";
+
+    message.className =
+        success ? "success" : "error";
+
     message.textContent = text;
 }
+
+
+/* ============================= */
+/* START STRONY                  */
+/* ============================= */
+
 window.addEventListener("load", function () {
+
+    /*
+       Zawsze zaczynamy od pustego pola.
+       Usuwamy również starą wartość,
+       jeśli przeglądarka zapamiętała ją
+       z poprzedniej wersji strony.
+    */
+
     document.getElementById("teacher").value = "";
-    localStorage.removeItem("szafaAI_nauczyciel");
+
+    localStorage.removeItem(
+        "szafaAI_nauczyciel"
+    );
+
 });
+
 </script>
 
 </body>
+
 </html>
