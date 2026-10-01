@@ -320,7 +320,10 @@ function showMessage(text, success) {
     message.className = success ? "success" : "error";
     message.textContent = text;
 }
-
+window.addEventListener("load", function () {
+    document.getElementById("teacher").value = "";
+    localStorage.removeItem("szafaAI_nauczyciel");
+});
 </script>
 
 </body>
