@@ -131,6 +131,9 @@ button.action {
     border-radius: 10px;
     text-align: center;
     display: none;
+    white-space: pre-line;
+    text-align: center;
+    line-height: 1.5;
 }
 
 .error {
@@ -282,9 +285,10 @@ async function register(operation) {
         }
 
         showMessage(
-            "✓ ZAREJESTROWANO" +
-            operation + " klucz – sala " + selectedRoom,
-            true
+    "✓ ZAREJESTROWANO\n" +
+    (operation === "Pobieram" ? "Pobrano klucz" : "Oddano klucz") +
+    " – sala " + selectedRoom,
+    true
         );
         // Wyczyść formularz po prawidłowym zapisie
         document.getElementById("teacher").value = "";
