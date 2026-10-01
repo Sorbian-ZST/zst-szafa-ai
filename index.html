@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Szafa AI – Rejestr klucza</title>
+<title>Rejestr pobrania kluczy</title>
 
 <style>
 * {
@@ -19,7 +19,7 @@ body {
 }
 
 .container {
-    max-width: 500px;
+    max-width: 520px;
     margin: auto;
     padding: 25px 18px;
 }
@@ -33,18 +33,22 @@ body {
 
 .logo {
     text-align: center;
-    font-size: 52px;
+    font-size: 50px;
+    margin-bottom: 10px;
 }
 
 h1 {
     text-align: center;
-    margin: 10px 0 5px;
-    font-size: 25px;
+    margin: 5px 0;
+    font-size: 23px;
+    white-space: nowrap;
 }
 
 .subtitle {
     text-align: center;
-    color: #666;
+    color: #555;
+    font-size: 18px;
+    margin-top: 6px;
     margin-bottom: 30px;
 }
 
@@ -55,13 +59,24 @@ label {
     margin-bottom: 8px;
 }
 
-select {
+input {
     width: 100%;
     padding: 15px;
     font-size: 17px;
     border-radius: 10px;
     border: 1px solid #bbb;
     background: white;
+}
+
+input:focus {
+    outline: 2px solid #0067b8;
+    border-color: #0067b8;
+}
+
+.rooms-title {
+    font-weight: bold;
+    margin-top: 25px;
+    margin-bottom: 10px;
 }
 
 .rooms {
@@ -130,9 +145,20 @@ button.action {
 
 .footer {
     text-align: center;
-    color: #777;
+    color: #666;
     font-size: 13px;
-    margin-top: 20px;
+    margin-top: 22px;
+}
+
+/* Na bardzo małych telefonach nagłówek dopasuje się do ekranu */
+@media (max-width: 430px) {
+    h1 {
+        font-size: 19px;
+    }
+
+    .card {
+        padding: 20px 16px;
+    }
 }
 </style>
 </head>
@@ -140,24 +166,24 @@ button.action {
 <body>
 
 <div class="container">
+
 <div class="card">
 
 <div class="logo">🔑</div>
 
-<h1>SZAFA AI</h1>
-<div class="subtitle">Rejestr pobrania klucza</div>
+<h1>REJESTR POBRANIA KLUCZY</h1>
+<div class="subtitle">do szaf z laptopami</div>
 
 <label for="teacher">Nauczyciel</label>
 
-<select id="teacher">
-    <option value="">— wybierz nauczyciela —</option>
-    <option>Radosław Sorbian</option>
-    <option>Nauczyciel 2</option>
-    <option>Nauczyciel 3</option>
-</select>
+<input
+    type="text"
+    id="teacher"
+    placeholder="Wpisz imię i nazwisko"
+    autocomplete="name"
+>
 
-
-<label>Sala, do której pobierasz klucz</label>
+<div class="rooms-title">SALE wyposażone w laptopy</div>
 
 <div class="rooms">
     <button class="room" onclick="selectRoom(this,'01')">01</button>
@@ -165,7 +191,6 @@ button.action {
     <button class="room" onclick="selectRoom(this,'19')">19</button>
     <button class="room" onclick="selectRoom(this,'25')">25</button>
 </div>
-
 
 <div class="actions">
 
@@ -184,15 +209,23 @@ button.action {
 </div>
 
 <div class="footer">
-ZST – Pracownia AI
+Zespół Szkół Technicznych w Słupsku ® 2026
 </div>
 
 </div>
-
 
 <script>
 
 let selectedRoom = "";
+
+/* Odczyt zapamiętanego nazwiska */
+window.addEventListener("DOMContentLoaded", function() {
+    const savedTeacher = localStorage.getItem("szafaAI_nauczyciel");
+
+    if (savedTeacher) {
+        document.getElementById("teacher").value = savedTeacher;
+    }
+});
 
 function selectRoom(button, room) {
 
@@ -205,14 +238,13 @@ function selectRoom(button, room) {
     button.classList.add("active");
 }
 
-
 function register(operation) {
 
-    const teacher = document.getElementById("teacher").value;
-    const message = document.getElementById("message");
+    const teacher =
+        document.getElementById("teacher").value.trim();
 
     if (!teacher) {
-        showMessage("Wybierz nauczyciela.", false);
+        showMessage("Wpisz imię i nazwisko.", false);
         return;
     }
 
@@ -221,18 +253,21 @@ function register(operation) {
         return;
     }
 
+    /* Zapamiętanie nazwiska tylko na tym urządzeniu */
+    localStorage.setItem("szafaAI_nauczyciel", teacher);
+
     /*
-       W następnym kroku
-       podłączymy tutaj Power Automate.
+       Tutaj w kolejnym kroku podłączymy
+       zapis do Power Automate / Microsoft Lists.
     */
 
     showMessage(
-        "✓ " + operation + " – " +
-        teacher + ", sala " + selectedRoom,
+        "✓ " + operation +
+        " – " + teacher +
+        ", sala " + selectedRoom,
         true
     );
 }
-
 
 function showMessage(text, success) {
 
@@ -240,12 +275,10 @@ function showMessage(text, success) {
 
     message.style.display = "block";
     message.className = success ? "success" : "error";
-    message.innerHTML = text;
+    message.textContent = text;
 }
 
 </script>
 
 </body>
 </html>
-
-<!-- aktualizacja strony -->
